@@ -31,70 +31,65 @@ document.addEventListener('click', function(event) {
 });
     
 document.getElementById("myInput").value = `
-using System;
-class Shape
-{
-    public virtual void Draw()
-    {
-        Console.WriteLine("Drawing a shape");
-    }
-    public virtual void Erase()
-    {
-        Console.WriteLine("Erasing a shape");
-    }
-}
-class Circle : Shape
-{
-    public override void Draw()
-    {
-        Console.WriteLine("Drawing a circle");
-    }
-    public override void Erase()
-    {
-        Console.WriteLine("Erasing a circle");
-    }
-}
-class Triangle : Shape
-{
-    public override void Draw()
-    {
-        Console.WriteLine("Drawing a triangle");
-    }
-
-    public override void Erase()
-    {
-        Console.WriteLine("Erasing a triangle");
-    }
-}
-class Square : Shape
-{
-    public override void Draw()
-    {
-        Console.WriteLine("Drawing a square");
-    }
-
-    public override void Erase()
-    {
-        Console.WriteLine("Erasing a square");
-    }
-}
-class Program
-{
-    static void Main(string[] args)
-    {
-        
-        Shape[] shapes = new Shape[3];
-        shapes[0] = new Circle();
-        shapes[1] = new Triangle();
-        shapes[2] = new Square();
-        foreach (Shape shape in shapes)
-        {
-            shape.Draw();
-            shape.Erase();
-            Console.WriteLine();
-        }
-    }
-}
+In lab8 subfolder, write code in models.py
+from django.db import models
+class Course(models.Model):
+course_code=models.CharField(max_length=40) 
+course_name=models.CharField(max_length=100)
+course_credits=models.IntegerField()
+class Student(models.Model): 
+student_usn=models.CharField(max_length=20) 
+student_name=models.CharField(max_length=100) 
+student_sem=models.IntegerField() 
+enrolment=models.ManyToManyField(Course)
+In lab8 subfolder, write code in views.py
+from lab8.models import Student
+from django.views import generic
+class StudentListView(generic.ListView):
+model=Student
+template_name="student_list.html"
+class StudentDetailView(generic.DetailView):
+model=Student
+template_name="student_detail.html"
+In the lab8 folder, create a subfolder ‘templates’ and within the templates subfolder 
+create a file ‘student_list.html’ and ‘student_detail.html’.
+Student_list.html:
+<html>
+<body>
+{% if student_list %}
+<table border>
+<tr>
+<th>USN</th>
+ <th>Courses Enrolled</th>
+ </tr>
+ {% for student in student_list %}
+ <tr>
+<td><a href="/student_detail/{{student.pk}}">
+{{ student.student_usn }}</a>
+ </td>
+ <td>{% for course in student.enrolment.all %} <span>
+{{ course.course_name }}</span>
+{% endfor %}
+ </td>
+ </tr>
+ {% endfor %}
+</table>
+ {% else %}
+ <h1>No Students Enrolled</h1>
+ {% endif %}
+</body>
+</html>
+student_detail.html:
+<h1>Student Name: {{ student.student_name }}</h1>
+<h1>Student USN: {{ student.student_usn }}</h1>
+<h1>Student Sem: {{ student.student_sem }}</h1>
+In lab8 subfolder, write code in urls.py
+from django.urls import path
+from lab8.views import StudentListView,StudentDetailView
+urlpatterns = [ 
+path('student_list/', StudentListView.as_view()), 
+path('student_detail/<int:pk>/', StudentDetailView.as_view()),
+ ]
 `
 
 function myFunction() {
